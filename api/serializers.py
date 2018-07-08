@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from api.models import Recipe, UserInfo, Tag
+from api.models import Recipe, UserInfo, Tag, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,7 +16,16 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ('like_count',)
+
+
 class RecipeSerializer(serializers.ModelSerializer):
+    comment_set = CommentSerializer(many=True, read_only=True)
+
     class Meta:
         model = Recipe
         fields = '__all__'

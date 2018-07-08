@@ -33,7 +33,7 @@ class Recipe(models.Model):
 
 class Tag(models.Model):
     title = models.CharField(max_length=10)
-    descrption = models.TextField(max_length=4096, blank=False, default='')
+    description = models.TextField(max_length=4096, blank=False, default='')
 
 
 class Comment(models.Model):
