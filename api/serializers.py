@@ -10,22 +10,18 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ('password',)
 
 
-class UserInfoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserInfo
-        fields = '__all__'
-        read_only_fields = ('friends', 'recipe_collection')
-
-    def to_representation(self, instance):
-        self.fields['user'] = UserSerializer(read_only=True)
-        return super(UserInfoSerializer, self).to_representation(instance)
-
-
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = '__all__'
+        depth = 1
 
-    def to_representation(self, instance):
-        self.fields['create_by'] = UserInfoSerializer(read_only=True)
-        return super(RecipeSerializer, self).to_representation(instance)
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    recipe_created = RecipeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = UserInfo
+        fields = '__all__'
+        read_only_fields = ('friends', 'recipe_collection')
+        depth = 1

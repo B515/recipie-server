@@ -22,7 +22,7 @@ class Recipe(models.Model):
     like_count = models.IntegerField(default='0')
     collect_count = models.IntegerField(default='0')
     # 用户-菜谱 一对多联系 (属于关系)
-    create_by = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name="create")
+    create_by = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name="recipe_created")
 
     class Meta:
         ordering = ('created_at',)
