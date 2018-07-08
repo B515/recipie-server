@@ -22,7 +22,7 @@ from api import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserInfoViewSet)
 router.register(r'recipes', views.RecipeViewSet)
-
+router.register(r'tags', views.TagViewSet)
 urlpatterns = [
     path('', views.index),
     path('api/', include(router.urls)),

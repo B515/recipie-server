@@ -17,12 +17,15 @@ class Recipe(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=100, blank=False, default='')
+    description = models.CharField(max_length=100, blank=False, default='')
     content = models.TextField(max_length=4096, blank=False, default='')
     read_count = models.IntegerField(default='0')
     like_count = models.IntegerField(default='0')
     collect_count = models.IntegerField(default='0')
     # 用户-菜谱 一对多联系 (属于关系)
     create_by = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name="recipe_created")
+    # 菜谱-标签 多对多联系
+    tag = models.ManyToManyField('Tag', related_name='tag')
 
     class Meta:
         ordering = ('created_at',)
@@ -31,8 +34,6 @@ class Recipe(models.Model):
 class Tag(models.Model):
     title = models.CharField(max_length=10)
     descrption = models.TextField(max_length=4096, blank=False, default='')
-    # 菜谱-标签 多对多联系
-    belong = models.ManyToManyField(Recipe)
 
 
 class Comment(models.Model):

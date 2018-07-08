@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from rest_framework import viewsets
+from rest_framework.decorators import action
 
-from api.models import Recipe, UserInfo
-from .serializers import RecipeSerializer, UserInfoSerializer
+from api.models import Recipe, UserInfo, Tag
+from .serializers import RecipeSerializer, UserInfoSerializer, TagSerializer
 
 
 class UserInfoViewSet(viewsets.ModelViewSet):
@@ -19,6 +20,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(create_by=UserInfo.objects.get(user=self.request.user.id))
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
 def index(request):
