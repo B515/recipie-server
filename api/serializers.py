@@ -14,6 +14,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = '__all__'
+        read_only_fields = ('read_count', 'like_count', 'collect_count')
         depth = 1
 
 
