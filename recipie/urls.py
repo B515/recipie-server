@@ -20,6 +20,7 @@ from rest_framework import routers
 from api import views
 
 router = routers.DefaultRouter()
+router.register(r'users', views.UserInfoViewSet)
 router.register(r'recipes', views.RecipeViewSet)
 
 urlpatterns = [

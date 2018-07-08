@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class UserInfo(models.Model):
     nickname = models.CharField(max_length=16)
     gender = models.CharField(max_length=16)
-    avatar = models.FileField(upload_to='')
+    avatar = models.CharField(max_length=1024)
     # 用户关注 多对多联系
     friends = models.ManyToManyField("self", symmetrical=False)
     # 用户-菜谱 多对多关系 (收藏关系)
