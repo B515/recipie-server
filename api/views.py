@@ -1,10 +1,11 @@
 from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from api.models import Recipe, UserInfo, Tag, Comment
-from .serializers import RecipeSerializer, UserInfoSerializer, TagSerializer, CommentSerializer
+from api.models import Recipe, UserInfo, Tag, Comment, File
+from .serializers import RecipeSerializer, UserInfoSerializer, TagSerializer, CommentSerializer, FileSerializer
 
 
 class UserInfoViewSet(viewsets.ModelViewSet):
@@ -51,6 +52,15 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(userinfo=UserInfo.objects.get(user=self.request.user.id))
+
+
+class FileViewSet(viewsets.ModelViewSet):
+    queryset = File.objects.all()
+    serializer_class = FileSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=UserInfo.objects.get(user=self.request.user.id))
 
 
 def index(request):

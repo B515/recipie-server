@@ -44,3 +44,8 @@ class Comment(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     # 用户-评论 一对多联系
     userinfo = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
+
+
+class File(models.Model):
+    file = models.FileField(blank=False, null=False)
+    owner = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
