@@ -41,6 +41,6 @@ class Comment(models.Model):
     content = models.TextField(max_length=4096, blank=False, default='')
     like_count = models.IntegerField(default='0')
     # 菜谱-评论 一对多联系
-    recipe_id = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     # 用户-评论 一对多联系
-    user_id = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
+    userinfo = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
