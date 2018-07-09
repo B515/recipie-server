@@ -1,6 +1,5 @@
 from django.http import HttpResponse
 from rest_framework import viewsets
-from rest_framework.decorators import action
 
 from api.models import Recipe, UserInfo, Tag, Comment
 from .serializers import RecipeSerializer, UserInfoSerializer, TagSerializer,CommentSerializer
