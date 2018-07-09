@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -39,6 +40,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for tag_id in self.request.data['tag'].split(','):
             tag = Tag.objects.get(id=tag_id)
             recipe.tag.add(tag)
+
+    @action(methods=['get'], detail=False)
+    def search_by_keyword(self, request):
+        keyword = request.query_params['keyword']
+        r = Recipe.objects.filter(Q(title__contains=keyword) | Q(description__contains=keyword))
+        serializer = RecipeSerializer(r, many=True)
+        return Response(serializer.data)
 
 
 class TagViewSet(viewsets.ModelViewSet):
