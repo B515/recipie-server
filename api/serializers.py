@@ -10,12 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ('password',)
 
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = '__all__'
-
-
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
@@ -31,6 +25,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('read_count', 'like_count', 'collect_count')
         depth = 1
+
+
+class TagSerializer(serializers.ModelSerializer):
+    recipe_set = RecipeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Tag
+        fields = '__all__'
 
 
 class UserInfoSerializer(serializers.ModelSerializer):

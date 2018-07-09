@@ -25,7 +25,7 @@ class Recipe(models.Model):
     # 用户-菜谱 一对多联系 (属于关系)
     create_by = models.ForeignKey(UserInfo, on_delete=models.CASCADE, related_name="recipe_created")
     # 菜谱-标签 多对多联系
-    tag = models.ManyToManyField('Tag', related_name='tag')
+    tag = models.ManyToManyField('Tag')
 
     class Meta:
         ordering = ('created_at',)
