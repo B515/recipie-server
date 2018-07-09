@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.models import Recipe, UserInfo, Tag, Comment
-from .serializers import RecipeSerializer, UserInfoSerializer, TagSerializer,CommentSerializer
+from .serializers import RecipeSerializer, UserInfoSerializer, TagSerializer, CommentSerializer
 
 
 class UserInfoViewSet(viewsets.ModelViewSet):
@@ -34,7 +34,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
 
     def perform_create(self, serializer):
-        recipe =serializer.save(create_by=UserInfo.objects.get(user=self.request.user.id))
+        recipe = serializer.save(create_by=UserInfo.objects.get(user=self.request.user.id))
         for tag_id in self.request.data['tag'].split(','):
             tag = Tag.objects.get(id=tag_id)
             recipe.tag.add(tag)
