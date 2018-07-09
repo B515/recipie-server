@@ -50,7 +50,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user_id=UserInfo.objects.get(user=self.request.user.id))
+        serializer.save(userinfo=UserInfo.objects.get(user=self.request.user.id))
 
 
 def index(request):
