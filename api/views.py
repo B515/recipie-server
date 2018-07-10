@@ -42,6 +42,12 @@ class UserInfoViewSet(viewsets.ModelViewSet):
         me.friends.remove(self.get_object())
         return Response({'success': True})
 
+    @action(methods=['get'], detail=False)
+    def followers(self, request):
+        me = UserInfo.objects.get(user=request.user.id)
+        serializer = self.get_serializer(me.userinfo_set, many=True)
+        return Response(serializer.data)
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()

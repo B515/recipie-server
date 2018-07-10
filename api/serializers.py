@@ -7,7 +7,7 @@ from api.models import Recipe, UserInfo, Tag, Comment, File
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ('password',)
+        exclude = ('password', "first_name", "last_name", "email", "groups", "user_permissions",)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -36,6 +36,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     recipe_created = RecipeSerializer(many=True, read_only=True)
 
     class Meta:

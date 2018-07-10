@@ -12,6 +12,9 @@ class UserInfo(models.Model):
     recipe_collection = models.ManyToManyField('Recipe')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.nickname
+
 
 class Recipe(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,6 +30,9 @@ class Recipe(models.Model):
     # 菜谱-标签 多对多联系
     tag = models.ManyToManyField('Tag')
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         ordering = ('created_at',)
 
@@ -34,6 +40,9 @@ class Recipe(models.Model):
 class Tag(models.Model):
     title = models.CharField(max_length=10)
     description = models.TextField(max_length=4096, blank=False, default='')
+
+    def __str__(self):
+        return self.title
 
 
 class Comment(models.Model):
@@ -45,7 +54,13 @@ class Comment(models.Model):
     # 用户-评论 一对多联系
     userinfo = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.content
+
 
 class File(models.Model):
     file = models.FileField(blank=False, null=False)
     owner = models.ForeignKey(UserInfo, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.file
