@@ -30,6 +30,18 @@ class UserInfoViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
+    @action(methods=['post'], detail=True)
+    def follow(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.friends.add(self.get_object())
+        return Response({'success': True})
+
+    @action(methods=['post'], detail=True)
+    def unfollow(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.friends.remove(self.get_object())
+        return Response({'success': True})
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
@@ -47,6 +59,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         r = Recipe.objects.filter(Q(title__contains=keyword) | Q(description__contains=keyword))
         serializer = RecipeSerializer(r, many=True)
         return Response(serializer.data)
+
+    @action(methods=['post'], detail=True)
+    def collect(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.recipe_collection.add(self.get_object())
+        return Response({'success': True})
+
+    @action(methods=['post'], detail=True)
+    def uncollect(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.recipe_collection.remove(self.get_object())
+        return Response({'success': True})
 
 
 class TagViewSet(viewsets.ModelViewSet):
