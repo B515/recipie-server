@@ -82,7 +82,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def update_collect_count(self):
         r = self.get_object()
-        r.collect_count = r.userinfo_set.count()
+        r.collect_count = r.recipe_collection.count()
+        r.save()
+
+    @action(methods=['post'], detail=True)
+    def like(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.recipe_like.add(self.get_object())
+        self.update_like_count()
+        return Response({'success': True})
+
+    @action(methods=['post'], detail=True)
+    def unlike(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.recipe_like.remove(self.get_object())
+        self.update_like_count()
+        return Response({'success': True})
+
+    def update_like_count(self):
+        r = self.get_object()
+        r.like_count = r.recipe_like.count()
         r.save()
 
 
@@ -97,6 +116,25 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(userinfo=UserInfo.objects.get(user=self.request.user.id))
+
+    @action(methods=['post'], detail=True)
+    def like(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.comment_like.add(self.get_object())
+        self.update_like_count()
+        return Response({'success': True})
+
+    @action(methods=['post'], detail=True)
+    def unlike(self, request, pk=None):
+        me = UserInfo.objects.get(user=request.user.id)
+        me.comment_like.remove(self.get_object())
+        self.update_like_count()
+        return Response({'success': True})
+
+    def update_like_count(self):
+        r = self.get_object()
+        r.like_count = r.comment_like.count()
+        r.save()
 
 
 class FileViewSet(viewsets.ModelViewSet):

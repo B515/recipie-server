@@ -9,7 +9,11 @@ class UserInfo(models.Model):
     # 用户关注 多对多联系
     friends = models.ManyToManyField("self", symmetrical=False)
     # 用户-菜谱 多对多关系 (收藏关系)
-    recipe_collection = models.ManyToManyField('Recipe')
+    recipe_collection = models.ManyToManyField('Recipe', related_name='recipe_collection')
+    # 用户-菜谱 多对多关系 (点赞)
+    recipe_like = models.ManyToManyField('Recipe', related_name='recipe_like')
+    # 用户-评论 多对多关系 (点赞)
+    comment_like = models.ManyToManyField('Comment', related_name='comment_like')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
@@ -34,6 +38,7 @@ class Recipe(models.Model):
 class Tag(models.Model):
     title = models.CharField(max_length=10)
     description = models.TextField(max_length=4096, blank=False, default='')
+    like_count = models.IntegerField(default='0')
 
 
 class Comment(models.Model):

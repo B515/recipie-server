@@ -33,6 +33,7 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
+        read_only_fields = ('like_count')
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
