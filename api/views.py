@@ -53,6 +53,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             tag = Tag.objects.get(id=tag_id)
             recipe.tag.add(tag)
 
+    def retrieve(self, request, *args, **kwargs):
+        r = self.get_object()
+        r.read_count += 1
+        r.save()
+        return super(RecipeViewSet, self).retrieve(request, args, kwargs)
+
     @action(methods=['get'], detail=False)
     def search_by_keyword(self, request):
         keyword = request.query_params['keyword']
@@ -64,13 +70,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def collect(self, request, pk=None):
         me = UserInfo.objects.get(user=request.user.id)
         me.recipe_collection.add(self.get_object())
+        self.update_collect_count()
         return Response({'success': True})
 
     @action(methods=['post'], detail=True)
     def uncollect(self, request, pk=None):
         me = UserInfo.objects.get(user=request.user.id)
         me.recipe_collection.remove(self.get_object())
+        self.update_collect_count()
         return Response({'success': True})
+
+    def update_collect_count(self):
+        r = self.get_object()
+        r.collect_count = r.userinfo_set.count()
+        r.save()
 
 
 class TagViewSet(viewsets.ModelViewSet):
