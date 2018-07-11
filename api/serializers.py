@@ -11,6 +11,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    comment_like = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Comment
         fields = '__all__'
@@ -20,6 +22,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True, read_only=True)
+    recipe_like = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    recipe_collection = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Recipe
