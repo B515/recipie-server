@@ -64,7 +64,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
 
     def perform_create(self, serializer):
-        recipe = serializer.save(create_by=UserInfo.objects.get(user=self.request.user.id))
+        recipe = serializer.save(create_by=me(self.request))
         for tag_id in self.request.data['tag'].split(','):
             tag = Tag.objects.get(id=tag_id)
             recipe.tag.add(tag)
@@ -123,7 +123,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
-        serializer.save(userinfo=UserInfo.objects.get(user=self.request.user.id))
+        serializer.save(userinfo=me(self.request))
 
     @action(methods=['post'], detail=True)
     def like(self, request, pk=None):
@@ -147,7 +147,7 @@ class FileViewSet(viewsets.ModelViewSet):
     parser_classes = (MultiPartParser, FormParser)
 
     def perform_create(self, serializer):
-        serializer.save(owner=UserInfo.objects.get(user=self.request.user.id))
+        serializer.save(owner=me(self.request))
 
 
 def index(request):
