@@ -48,6 +48,11 @@ class UserInfoViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(me.userinfo_set, many=True)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=False)
+    def following(self, request):
+        me = UserInfo.objects.get(user=request.user.id)
+        serializer = self.get_serializer(me.friends.all(), many=True)
+        return Response(serializer.data)
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()

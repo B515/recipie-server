@@ -1,5 +1,7 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.contrib.auth.models import User
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 
 
 class UserInfo(models.Model):
@@ -18,6 +20,17 @@ class UserInfo(models.Model):
 
     def __str__(self):
         return self.nickname
+
+# @receiver(m2m_changed, sender=UserInfo.friends.through)
+# def verify_uniqueness(sender, **kwargs):
+#     userinfo = kwargs.get('instance', None)
+#     action = kwargs.get('action', None)
+#     friends = kwargs.get('pk_set', None)
+#
+#     if action == 'pre_add':
+#         for friend in friends:
+#             if UserInfo.objects.filter(nickname=userinfo.name).filter(friends=friend):
+#                 raise IntegrityError('You have already followed this user')
 
 
 class Recipe(models.Model):
@@ -44,7 +57,6 @@ class Recipe(models.Model):
 class Tag(models.Model):
     title = models.CharField(max_length=10)
     description = models.TextField(max_length=4096, blank=False, default='')
-    like_count = models.IntegerField(default='0')
 
     def __str__(self):
         return self.title
