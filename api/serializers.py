@@ -15,6 +15,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         read_only_fields = ('like_count',)
+        depth = 1
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -33,7 +34,7 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
-        read_only_fields = ('like_count')
+        read_only_fields = ('like_count',)
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
