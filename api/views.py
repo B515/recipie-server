@@ -9,6 +9,10 @@ from api.models import Recipe, UserInfo, Tag, Comment, File
 from .serializers import RecipeSerializer, UserInfoSerializer, TagSerializer, CommentSerializer, FileSerializer
 
 
+def me(request):
+    return UserInfo.objects.get(user=request.user.id)
+
+
 class UserInfoViewSet(viewsets.ModelViewSet):
     queryset = UserInfo.objects.all()
     serializer_class = UserInfoSerializer
@@ -18,45 +22,40 @@ class UserInfoViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def me(self, request):
-        me = UserInfo.objects.get(user=request.user.id)
-        serializer = self.get_serializer(me)
+        serializer = self.get_serializer(me(request))
         return Response(serializer.data)
 
     @action(methods=['post'], detail=False)
     def update_me(self, request):
-        me = UserInfo.objects.get(user=request.user.id)
-        serializer = self.get_serializer(me, data=request.data, partial=True)
+        serializer = self.get_serializer(me(request), data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
     def follow(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.friends.add(self.get_object())
+        me(request).friends.add(self.get_object())
         return Response({'success': True})
 
     @action(methods=['post'], detail=True)
     def unfollow(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.friends.remove(self.get_object())
+        me(request).friends.remove(self.get_object())
         return Response({'success': True})
 
     @action(methods=['get'], detail=False)
     def my_followers(self, request):
-        me = UserInfo.objects.get(user=request.user.id)
-        serializer = self.get_serializer(me.userinfo_set, many=True)
-        return Response(serializer.data)
+        return self.users_response(me(request).userinfo_set)
 
     @action(methods=['get'], detail=False)
     def my_following(self, request):
-        me = UserInfo.objects.get(user=request.user.id)
-        serializer = self.get_serializer(me.friends.all(), many=True)
-        return Response(serializer.data)
+        return self.users_response(me(request).friends.all())
 
     @action(methods=['get'], detail=True)
     def followers(self, request, pk=None):
-        serializer = self.get_serializer(self.get_object().userinfo_set, many=True)
+        return self.users_response(self.get_object().userinfo_set)
+
+    def users_response(self, users):
+        serializer = self.get_serializer(users, many=True)
         return Response(serializer.data)
 
 
@@ -85,41 +84,33 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=True)
     def collect(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.recipe_collection.add(self.get_object())
-        self.update_collect_count()
-        return Response({'success': True})
+        return self.update_collection(request, 'add')
 
     @action(methods=['post'], detail=True)
     def uncollect(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.recipe_collection.remove(self.get_object())
-        self.update_collect_count()
-        return Response({'success': True})
+        return self.update_collection(request, 'remove')
 
-    def update_collect_count(self):
+    def update_collection(self, request, action):
         r = self.get_object()
+        getattr(me(request).recipe_collection, action)(r)
         r.collect_count = r.recipe_collection.count()
         r.save()
+        return Response({'success': True})
 
     @action(methods=['post'], detail=True)
     def like(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.recipe_like.add(self.get_object())
-        self.update_like_count()
-        return Response({'success': True})
+        return self.update_like(request, 'add')
 
     @action(methods=['post'], detail=True)
     def unlike(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.recipe_like.remove(self.get_object())
-        self.update_like_count()
-        return Response({'success': True})
+        return self.update_like(request, 'remove')
 
-    def update_like_count(self):
+    def update_like(self, request, action):
         r = self.get_object()
+        getattr(me(request).recipe_like, action)(r)
         r.like_count = r.recipe_like.count()
         r.save()
+        return Response({'success': True})
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -136,22 +127,18 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=True)
     def like(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.comment_like.add(self.get_object())
-        self.update_like_count()
-        return Response({'success': True})
+        return self.update_like(request, 'add')
 
     @action(methods=['post'], detail=True)
     def unlike(self, request, pk=None):
-        me = UserInfo.objects.get(user=request.user.id)
-        me.comment_like.remove(self.get_object())
-        self.update_like_count()
-        return Response({'success': True})
+        return self.update_like(request, 'remove')
 
-    def update_like_count(self):
-        r = self.get_object()
-        r.like_count = r.comment_like.count()
-        r.save()
+    def update_like(self, request, action):
+        c = self.get_object()
+        getattr(me(request).comment_like, action)(c)
+        c.like_count = c.comment_like.count()
+        c.save()
+        return Response({'success': True})
 
 
 class FileViewSet(viewsets.ModelViewSet):
