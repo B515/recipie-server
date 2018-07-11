@@ -43,13 +43,13 @@ class UserInfoViewSet(viewsets.ModelViewSet):
         return Response({'success': True})
 
     @action(methods=['get'], detail=False)
-    def followers(self, request):
+    def my_followers(self, request):
         me = UserInfo.objects.get(user=request.user.id)
         serializer = self.get_serializer(me.userinfo_set, many=True)
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
-    def following(self, request):
+    def my_following(self, request):
         me = UserInfo.objects.get(user=request.user.id)
         serializer = self.get_serializer(me.friends.all(), many=True)
         return Response(serializer.data)
