@@ -54,6 +54,12 @@ class UserInfoViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(me.friends.all(), many=True)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=True)
+    def followers(self, request, pk=None):
+        serializer = self.get_serializer(self.get_object().userinfo_set, many=True)
+        return Response(serializer.data)
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
