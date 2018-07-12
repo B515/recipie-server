@@ -123,7 +123,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
-        serializer.save(userinfo=me(self.request))
+        serializer.save(userinfo=me(self.request), recipe=Recipe.objects.get(id=self.request.data['recipe']))
 
     @action(methods=['post'], detail=True)
     def like(self, request, pk=None):
